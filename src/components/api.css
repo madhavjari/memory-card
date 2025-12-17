@@ -1,0 +1,14 @@
+article {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.pokemon-images {
+  cursor: pointer;
+  height: 8rem;
+  width: 8rem;
+}
+
+.name {
+  text-transform: capitalize;
+}
