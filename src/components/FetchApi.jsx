@@ -66,6 +66,7 @@ export default function Pokemon({
     shuffleCards();
 
     if (clickedPokemon.includes(pokemon)) {
+      alert("Cant Catch 'em all! Try Again");
       setScore(0);
       setClickedPokemon([]);
     } else {
