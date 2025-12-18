@@ -3,13 +3,17 @@ import "./component.css";
 
 export default function Pokemon({
   allPokemons,
+  score,
   setScore,
   setClickedPokemon,
   clickedPokemon,
+  bestScore,
+  setBestScore,
 }) {
   const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [won, setWon] = useState(false);
 
   useEffect(() => {
     const fetchPokemon = async () => {
@@ -57,20 +61,26 @@ export default function Pokemon({
     audioRef.current.play();
   };
 
-  const gameOver = () => {
-    setScore(0);
-    setClickedPokemon([]);
-  };
-
-  const increaseScore = (pokemon) => {
-    setClickedPokemon((prevData) => [...prevData, pokemon]);
-    setScore((prevScore) => prevScore + 1);
-  };
   const handleClick = (url, pokemon) => {
     playSound(url);
     shuffleCards();
 
-    clickedPokemon.includes(pokemon) ? gameOver() : increaseScore(pokemon);
+    if (clickedPokemon.includes(pokemon)) {
+      setScore(0);
+      setClickedPokemon([]);
+    } else {
+      const newClicked = [...clickedPokemon, pokemon];
+      const newScore = score + 1;
+      setClickedPokemon(newClicked);
+      setScore(newScore);
+      if (bestScore < newScore) setBestScore(newScore);
+      if (newClicked.length === allPokemons.length) {
+        setWon(true);
+        alert("Catch 'em all! Congratulations");
+        setScore(0);
+        setClickedPokemon([]);
+      }
+    }
   };
 
   if (loading) return <h4>Loading ...</h4>;
@@ -85,7 +95,6 @@ export default function Pokemon({
             className="pokemon-images"
             onClick={() => handleClick(p.audio, p.theyCallMe)}
           />
-
           <h2 className="name">{p.theyCallMe}</h2>
         </div>
       ))}

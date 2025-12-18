@@ -23,16 +23,17 @@ function App() {
   const [score, setScore] = useState(0);
   const [bestScore, setBestScore] = useState(0);
 
-  if (bestScore < score) setBestScore(score);
-
   return (
     <>
       <Header score={score} bestScore={bestScore} />
       <Pokemon
         allPokemons={allPokemons}
+        score={score}
         clickedPokemon={clickedPokemon}
         setClickedPokemon={setClickedPokemon}
         setScore={setScore}
+        setBestScore={setBestScore}
+        bestScore={bestScore}
       />
     </>
   );
