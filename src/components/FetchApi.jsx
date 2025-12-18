@@ -1,31 +1,14 @@
 import { useEffect, useState, useRef } from "react";
-import "./api.css";
+import "./component.css";
 
-export default function Pokemon() {
+export default function Pokemon({ allPokemons, randomizeCards }) {
   const [pokemon, setPokemon] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const allPokemons = [
-    "pikachu",
-    "charizard",
-    "bulbasaur",
-    "pidgeot",
-    "ninetales",
-    "vulpix",
-    "arbok",
-    "primeape",
-    "magneton",
-    "onix",
-    "cubone",
-    "starmie",
-  ];
 
   useEffect(() => {
     const fetchPokemon = async () => {
       try {
-        const response = await fetch(
-          "https://pokeapi.co/api/v2/pokemon/pikachu"
-        );
         const results = await Promise.all(
           allPokemons.map(async (theyCallMe) => {
             const response = await fetch(
@@ -48,13 +31,21 @@ export default function Pokemon() {
       }
     };
     fetchPokemon();
-  }, []);
+  }, [allPokemons]);
+
   const audioRef = useRef(null);
+
   const playSound = (url) => {
     audioRef.current.src = url;
     audioRef.current.volume = 0.1;
     audioRef.current.play();
   };
+
+  const handleClick = (url) => {
+    playSound(url);
+    randomizeCards();
+  };
+
   if (loading) return <h4>Loading ...</h4>;
   if (error) return <h4>Error: {error}</h4>;
   return (
@@ -65,7 +56,7 @@ export default function Pokemon() {
             src={p.image}
             alt={p.theyCallMe}
             className="pokemon-images"
-            onClick={() => playSound(p.audio)}
+            onClick={() => handleClick(p.audio)}
           />
 
           <h2 className="name">{p.theyCallMe}</h2>
