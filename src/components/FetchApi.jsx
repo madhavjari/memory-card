@@ -1,8 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import "./component.css";
 
-export default function Pokemon({ allPokemons, randomizeCards }) {
-  const [pokemon, setPokemon] = useState(null);
+export default function Pokemon({
+  allPokemons,
+  setScore,
+  setClickedPokemon,
+  clickedPokemon,
+}) {
+  const [pokemon, setPokemon] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,15 +40,37 @@ export default function Pokemon({ allPokemons, randomizeCards }) {
 
   const audioRef = useRef(null);
 
+  const shuffleCards = () => {
+    setPokemon((prev) => {
+      const shuffled = [...prev];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled;
+    });
+  };
+
   const playSound = (url) => {
     audioRef.current.src = url;
     audioRef.current.volume = 0.1;
     audioRef.current.play();
   };
 
-  const handleClick = (url) => {
+  const gameOver = () => {
+    setScore(0);
+    setClickedPokemon([]);
+  };
+
+  const increaseScore = (pokemon) => {
+    setClickedPokemon((prevData) => [...prevData, pokemon]);
+    setScore((prevScore) => prevScore + 1);
+  };
+  const handleClick = (url, pokemon) => {
     playSound(url);
-    randomizeCards();
+    shuffleCards();
+
+    clickedPokemon.includes(pokemon) ? gameOver() : increaseScore(pokemon);
   };
 
   if (loading) return <h4>Loading ...</h4>;
@@ -56,7 +83,7 @@ export default function Pokemon({ allPokemons, randomizeCards }) {
             src={p.image}
             alt={p.theyCallMe}
             className="pokemon-images"
-            onClick={() => handleClick(p.audio)}
+            onClick={() => handleClick(p.audio, p.theyCallMe)}
           />
 
           <h2 className="name">{p.theyCallMe}</h2>
